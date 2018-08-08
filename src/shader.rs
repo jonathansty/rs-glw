@@ -6,9 +6,27 @@ use std::fs::File;
 use std::io::Read;
 use std::error::Error;
 
+pub enum ShaderType
+{
+    Vertex   ,
+    Fragment,
+    Compute ,
+    Geometry 
+}
+impl ShaderType{
+    fn value(&self) -> GLenum{
+        match *self {
+            ShaderType::Vertex => gl::VERTEX_SHADER,
+            ShaderType::Fragment => gl::FRAGMENT_SHADER,
+            ShaderType::Compute => gl::COMPUTE_SHADER,
+            ShaderType::Geometry => gl::GEOMETRY_SHADER
+        }
+    }
+}
 /// A wrapper around opengl shader objects. 
 pub struct Shader {
     id: u32,
+    _shader_type: ShaderType
 }
 
 impl Drop for Shader {
@@ -26,10 +44,11 @@ impl Shader {
         self.id
     }
     // Creates a new empty shader object
-    pub fn new(shader_type: GLenum) -> Shader {
+    pub fn new(shader_type: ShaderType) -> Shader {
         unsafe {
             Shader {
-                id: gl::CreateShader(shader_type),
+                id: gl::CreateShader(shader_type.value()),
+                _shader_type: shader_type
             }
         }
     }
