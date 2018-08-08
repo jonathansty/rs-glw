@@ -1,6 +1,6 @@
 [package]
 name = "glw"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["jonathansty <7695731+jonathansty@users.noreply.github.com>"]
 license = "MIT"
 homepage = "https://github.com/jonathansty/rs-glw"
