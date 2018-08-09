@@ -85,7 +85,7 @@ dependencies = [
 
 [[package]]
 name = "glw"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "gl 0.10.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "glfw 0.23.0 (registry+https://github.com/rust-lang/crates.io-index)",

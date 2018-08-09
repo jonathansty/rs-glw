@@ -1,6 +1,4 @@
-extern crate gl;
-
-use gl::types::*;
+use super::*;
 use std::ffi::CString;
 use std::fs::File;
 use std::io::Read;

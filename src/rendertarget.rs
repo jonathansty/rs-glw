@@ -1,5 +1,4 @@
-extern crate gl;
-extern crate std;
+use super::*;
 
 use super::color::Color;
 use super::math::*;
@@ -10,6 +9,7 @@ pub struct RenderTarget{
     size: Vec2<i32>,
     fb: GLuint,
     tex: GLuint,
+    fmt: GLuint
 }
 
 impl Default for RenderTarget{
@@ -18,7 +18,8 @@ impl Default for RenderTarget{
         RenderTarget{
             size: Vec2::<i32>{x: 32, y: 32},
             fb: 0,
-            tex: 0
+            tex: 0,
+            fmt: gl::RGBA32F
         }
     }
 }
@@ -29,6 +30,7 @@ impl RenderTarget{
     pub fn new(size : Vec2<i32>) -> Result<RenderTarget, &'static str> {
         let mut tex = 0;
         let mut fb = 0;
+        let mut fmt = gl::RGBA;
 
         unsafe {
             gl::GenFramebuffers(1,&mut fb);
@@ -41,7 +43,7 @@ impl RenderTarget{
 
             gl::FramebufferTexture(gl::FRAMEBUFFER,gl::COLOR_ATTACHMENT0, tex,0);
 
-            gl::TexImage2D(gl::TEXTURE_2D,0,gl::RGBA as i32, size.x, size.y, 0, gl::RGBA, gl::UNSIGNED_BYTE, std::ptr::null());
+            gl::TexImage2D(gl::TEXTURE_2D,0,gl::RGBA8 as i32, size.x, size.y, 0, gl::RGBA, gl::UNSIGNED_BYTE, std::ptr::null());
 
             let complete = gl::CheckFramebufferStatus(gl::FRAMEBUFFER);
 
@@ -56,7 +58,8 @@ impl RenderTarget{
         Ok( RenderTarget{
             size,
             fb,
-            tex
+            tex,
+            fmt
         } )
 
     }
@@ -66,7 +69,7 @@ impl RenderTarget{
             gl::BindFramebuffer(gl::FRAMEBUFFER, self.fb);
             gl::BindTexture(gl::TEXTURE_2D, self.tex);
 
-            gl::TexImage2D(gl::TEXTURE_2D,0,gl::RGBA as i32, self.size.x, self.size.y, 0, gl::RGBA, gl::UNSIGNED_BYTE, data.as_ptr() as *const std::os::raw::c_void);
+            gl::TexImage2D(gl::TEXTURE_2D,0,gl::RGBA8 as i32, self.size.x, self.size.y, 0, gl::RGBA, gl::UNSIGNED_BYTE, data.as_ptr() as *const std::os::raw::c_void);
 
             gl::BindTexture(gl::TEXTURE_2D, 0);
             gl::BindFramebuffer(gl::FRAMEBUFFER,0);

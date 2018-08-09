@@ -1,8 +1,4 @@
-extern crate gl;
-
-use super::shader::{Shader,Uniform};
-
-use gl::types::*;
+use super::*;
 
 use std::ffi::CString;
 use std::rc::Rc;
@@ -81,6 +77,7 @@ impl GraphicsPipeline {
 pub struct PipelineBuilder{
     vshader: Option<Rc<Shader>>,
     fshader: Option<Rc<Shader>>,
+    cshader: Option<Rc<Shader>>,
 }
 
 impl PipelineBuilder {
@@ -88,16 +85,20 @@ impl PipelineBuilder {
         PipelineBuilder::default()
     }
 
-    pub fn with_vertex_shader(&mut self, shader: Shader) -> &mut Self
-    {
+    pub fn with_vertex_shader(&mut self, shader: Shader) -> &mut Self {
         self.vshader = Some(Rc::new(shader));
 
         self
     }
 
-    pub fn with_fragment_shader(&mut self, shader: Shader) -> &mut Self
-    {
+    pub fn with_fragment_shader(&mut self, shader: Shader) -> &mut Self {
         self.fshader = Some(Rc::new(shader));
+
+        self
+    }
+
+    pub fn with_compute_shader(&mut self, shader: Shader) -> &mut Self {
+        self.cshader = Some(Rc::new(shader));
 
         self
     }
@@ -110,9 +111,14 @@ impl PipelineBuilder {
             result.attach(&shader);
         }
 
+        if let Some(ref shader) = self.cshader {
+            result.attach(&shader);
+        }
+
         if let Some(ref shader) = self.fshader {
             result.attach(&shader);
         }
+        
 
         result.link();
 

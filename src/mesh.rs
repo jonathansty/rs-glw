@@ -1,6 +1,5 @@
-extern crate gl;
+use super::*;
 
-use gl::types::*;
 use std;
 
 pub struct Mesh {
