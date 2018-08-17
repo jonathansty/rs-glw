@@ -5,6 +5,7 @@ use super::math::*;
 
 use gl::types::*;
 
+#[allow(dead_code)]
 pub struct RenderTarget{
     size: Vec2<i32>,
     fb: GLuint,
@@ -30,7 +31,7 @@ impl RenderTarget{
     pub fn new(size : Vec2<i32>) -> Result<RenderTarget, &'static str> {
         let mut tex = 0;
         let mut fb = 0;
-        let mut fmt = gl::RGBA;
+        let fmt = gl::RGBA;
 
         unsafe {
             gl::GenFramebuffers(1,&mut fb);
