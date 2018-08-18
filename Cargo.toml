@@ -12,5 +12,5 @@ gl = "0.10.0"
 
 [workspace]
 members = [
-	"examples/Rust-Game-Of-Life"
+	"examples/Rust-Game-of-life"
 ]

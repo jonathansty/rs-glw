@@ -10,6 +10,7 @@ pub mod math;
 pub mod rendertarget;
 pub mod mesh;
 pub mod glcontext;
+pub mod buffers;
 
 pub use self::mesh::{Mesh,MeshBuilder};
 pub use self::program::{GraphicsPipeline,PipelineBuilder};

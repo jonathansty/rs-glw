@@ -40,6 +40,9 @@ impl GraphicsPipeline {
                 _ => match uni {
                     Uniform::Float(v) => gl::Uniform1f(loc, v),
                     Uniform::Int(v) => gl::Uniform1i(loc, v),
+                    Uniform::Vec2(x,y) => {
+                        gl::Uniform2f(loc, x, y);
+                    },
                     Uniform::Sampler2D(v) => {
                         self.set_sampler(v);
 
@@ -49,6 +52,12 @@ impl GraphicsPipeline {
             }
         }
     }
+    pub fn bind_storage_buffer(&self, buffer: GLuint, binding: GLuint){
+        unsafe{
+            gl::BindBufferBase(gl::SHADER_STORAGE_BUFFER,binding, buffer);
+        }
+    }
+
 
     fn attach(&mut self, shader : &Shader)
     {

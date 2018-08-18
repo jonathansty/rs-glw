@@ -105,7 +105,7 @@ impl Shader {
                 self.load_from_memory(v)
             },
             Err(err) => {
-                Err(From::from(format!("Failed to load shader for path \"{}\": {}", path, err))) 
+                Err(From::from(format!("Failed to load shader for path \"{}\": \n{}", path, err))) 
             }
         }
     }
@@ -118,5 +118,6 @@ impl Shader {
 pub enum Uniform {
     Float(f32),
     Int(i32),
+    Vec2(f32,f32),
     Sampler2D(GLuint),
 }
