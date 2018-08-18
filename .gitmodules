@@ -1,0 +1,3 @@
+[submodule "examples/Rust-Game-of-life"]
+	path = examples/Rust-Game-of-life
+	url = git@github.com:jonathansty/Rust-Game-of-life.git
