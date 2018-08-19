@@ -75,7 +75,6 @@ impl GLContext{
        unsafe{
            gl::BindFramebuffer(gl::FRAMEBUFFER, rt.get_fb());
        }
-       self.set_viewport(0,0,rt.width() as i32, rt.height() as i32);
     }
 
     pub fn dispatch_compute(&mut self, groups_x : u32, groups_y : u32, groups_z : u32){
