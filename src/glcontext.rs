@@ -1,9 +1,11 @@
 use super::*;
 
+/// An openGL wrapper that is used to interface with openGL.
 pub struct GLContext;
 
 impl GLContext{
 
+    /// Default debug message callback for opengl messages
     #[allow(unused_variables)]
     extern "system" fn gl_debug_message(source : GLenum, msg_type : GLenum, id : GLuint, severity : GLenum, length : GLsizei, message : *const GLchar, param : *mut c_void)
     {
@@ -13,12 +15,14 @@ impl GLContext{
         }
     }
 
+    /// Creates anew OpenGL Context and links up the procedure address getter
     pub fn new(window : &mut glfw::Window) -> GLContext{
         gl::load_with(|s| window.get_proc_address(s) as *const _); 
 
         GLContext{}
     }
 
+    /// Enables the OpenGL debug callbacks. This is only available in debug configurations
     pub fn set_debug(&mut self) -> &Self {
         unsafe{
             gl::Enable(gl::DEBUG_OUTPUT);
@@ -71,6 +75,7 @@ impl GLContext{
        unsafe{
            gl::BindFramebuffer(gl::FRAMEBUFFER, rt.get_fb());
        }
+       self.set_viewport(0,0,rt.width() as i32, rt.height() as i32);
     }
 
     pub fn dispatch_compute(&mut self, groups_x : u32, groups_y : u32, groups_z : u32){
@@ -91,6 +96,7 @@ pub enum MemoryBarrier {
     ShaderStorage,
     All,
 }
+
 impl MemoryBarrier{
     pub fn get(&self) -> GLuint{
         match self {
