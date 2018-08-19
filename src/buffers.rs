@@ -8,7 +8,8 @@ use std::os::raw::c_void;
 /// Once the data is mapped the buffer does not keep a copy of the CPU data. 
 /// This is up to the user to track and resubmit whenever a change occurs.
 #[derive(Default)]
-pub struct StructuredBuffer<T>{
+pub struct StructuredBuffer<T>
+		where T: Default + Clone {
 	phantom: std::marker::PhantomData<T>,
 
 	id : GLuint,
@@ -16,18 +17,25 @@ pub struct StructuredBuffer<T>{
 	elements : usize,
 }
 
-impl<T> StructuredBuffer<T>{
-
+impl<T: Default + Clone> StructuredBuffer<T> {
 
 	/// Creates and allocates a new empty structured buffer for use on the GPU. 
 	/// ```size``` is the amount of elements. To Map data to the buffer use ```map_data(...)```
-	pub fn new(size : usize) -> Self{
+	pub fn new(size : usize) -> Self 
+	{
 		// Creates the buffer
 		let mut id = 0;
 		let buffer_size = std::mem::size_of::<T>() * size;
 
+		let mut empty_data = Vec::new();
+		empty_data.resize(size, T::default());
+
 		unsafe{
 			gl::GenBuffers(1,&mut id);
+
+			gl::BindBuffer(gl::SHADER_STORAGE_BUFFER, id);
+			gl::BufferData(gl::SHADER_STORAGE_BUFFER, buffer_size as isize, empty_data.as_ptr() as *const c_void, gl::DYNAMIC_COPY);
+			gl::BindBuffer(gl::SHADER_STORAGE_BUFFER, 0);
 		}
 
 		StructuredBuffer{
@@ -84,7 +92,7 @@ impl<T> StructuredBuffer<T>{
 	}
 }
 
-impl<T> Drop for StructuredBuffer<T>{
+impl<T: Default + Clone> Drop for StructuredBuffer<T>{
 	fn drop(&mut self){
 		unsafe{
 			gl::DeleteBuffers(1, &self.id);
