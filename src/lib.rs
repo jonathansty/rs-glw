@@ -18,7 +18,7 @@ pub use self::math::Vec2;
 pub use self::color::Color;
 pub use self::shader::{Shader, Uniform};
 pub use self::rendertarget::{RenderTarget};
-pub use self::glcontext::GLContext;
+pub use self::glcontext::{GLContext, MemoryBarrier};
 
 use gl::types::*;
 use std::os::raw::c_void;

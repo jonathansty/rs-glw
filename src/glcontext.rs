@@ -78,4 +78,25 @@ impl GLContext{
             gl::DispatchCompute(groups_x as GLuint, groups_y as GLuint, groups_z as GLuint);
         }
     }
+
+    pub fn memory_barrier(&mut self, barrier : MemoryBarrier){
+        unsafe{
+            gl::MemoryBarrier(barrier.get())
+        }
+    }
+}
+
+pub enum MemoryBarrier {
+    AtomicCounter,
+    ShaderStorage,
+    All,
+}
+impl MemoryBarrier{
+    pub fn get(&self) -> GLuint{
+        match self {
+            MemoryBarrier::AtomicCounter => gl::ATOMIC_COUNTER_BARRIER_BIT,
+            MemoryBarrier::ShaderStorage => gl::SHADER_STORAGE_BARRIER_BIT,
+            _ => 0x0
+        }
+    }
 }
