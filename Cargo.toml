@@ -10,7 +10,3 @@ description = "openGL Wrapper (glw) is a small collection of constructs to wrap 
 glfw = "0.23.0"
 gl = "0.10.0"
 
-[workspace]
-members = [
-	"examples/Rust-Game-of-life"
-]
