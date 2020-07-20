@@ -5,8 +5,8 @@ authors = ["jonathansty <7695731+jonathansty@users.noreply.github.com>"]
 license = "MIT"
 homepage = "https://github.com/jonathansty/rs-glw"
 description = "openGL Wrapper (glw) is a small collection of constructs to wrap around unsafe opengl calls. This is very much a work in progress and I do not advise anyone to use this in a production environment."
+edition = '2018'
 
 [dependencies]
-glfw = "0.23.0"
 gl = "0.10.0"
-
+glfw = "0.39.1"

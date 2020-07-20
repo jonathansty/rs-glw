@@ -1,6 +1,17 @@
 use super::*;
 use std::os::raw::c_void;
 
+
+/// # Buffer Resource interface
+/// Used to interface with buffer objects when passed into the renderer API
+pub trait BufferResource {
+	fn get_resource(self : &Self) -> *const std::ffi::c_void;
+
+	fn get_structure_size(self : &Self) -> usize;
+
+	fn get_buffer_size(self : &Self) -> usize;
+}
+
 /// # Structured Buffers
 /// Simple wrapper around SSBO objects, This is a generic type as this is a type that would
 /// be used in conjunction with a simple data structure defined in code.
@@ -15,6 +26,24 @@ pub struct StructuredBuffer<T>
 	id : GLuint,
 	buffer_size : usize,
 	elements : usize,
+}
+
+// Implements the buffer resource trait. This allows us to pass this into the renderer api
+impl<T: Default + Clone> BufferResource for StructuredBuffer<T> 
+{
+	fn get_resource(self : &Self) -> *const std::ffi::c_void {
+		return self.id as *const std::ffi::c_void;
+	}
+
+	fn get_structure_size(self : &Self)  -> usize
+	{
+		std::mem::size_of::<T>() 
+	}
+
+	fn get_buffer_size(self : &Self)  -> usize
+	{
+		return self.buffer_size 
+	}
 }
 
 impl<T: Default + Clone> StructuredBuffer<T> {

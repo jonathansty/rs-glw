@@ -1,7 +1,7 @@
 /// GLW is a opengl rust wrapper and utility library. Not suited for any production environment. 
 /// The goal of this library is to provide basic "safe" rust interfaces for a user to write graphics programs faster.
-extern crate gl;
-extern crate glfw;
+pub use gl as gl;
+pub use glfw as glfw;
 
 pub mod shader;
 pub mod program;

@@ -1,7 +1,18 @@
 use super::*;
 
+pub trait RenderBackend 
+{
+
+}
+
 /// An openGL wrapper that is used to interface with openGL.
 pub struct GLContext;
+
+
+impl RenderBackend for GLContext
+{
+
+}
 
 impl GLContext{
 
@@ -55,19 +66,12 @@ impl GLContext{
         self
     }
 
-    pub fn bind_image(&mut self, rt: &RenderTarget)
-    {
+    /// Binds a pipeline to the context.
+    pub fn bind_pipeline(&mut self, pipeline: &impl program::Pipeline){
+        assert!(pipeline.get_type() == program::PipelineType::Graphics);
         unsafe{
-            gl::BindImageTexture(0, rt.get_texture(), 0, false as u8, 0, gl::WRITE_ONLY, gl::RGBA8);
+            gl::UseProgram(pipeline.get() as GLuint);
         }
-    }
-
-    /// Binds a shader program
-    pub fn bind_pipeline(&mut self, program: &GraphicsPipeline){
-        unsafe{
-            gl::UseProgram(program.get_id());
-        }
-
     }
 
     /// Binds a render target for drawing
@@ -77,7 +81,7 @@ impl GLContext{
        }
     }
 
-    pub fn dispatch_compute(&mut self, groups_x : u32, groups_y : u32, groups_z : u32){
+    pub fn dispatch(&mut self, groups_x : u32, groups_y : u32, groups_z : u32){
         unsafe{
             gl::DispatchCompute(groups_x as GLuint, groups_y as GLuint, groups_z as GLuint);
         }

@@ -53,7 +53,6 @@ pub struct RenderTarget{
 
     fb: GLuint,
     tex: GLuint,
-
 }
 
 impl Default for RenderTarget{

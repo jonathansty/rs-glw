@@ -3,25 +3,41 @@ use super::*;
 use std::ffi::CString;
 use std::rc::Rc;
 
+#[derive(Eq, PartialEq)]
+pub enum PipelineType
+{
+    Graphics,
+    Compute
+}
+
+/// # Pipeline
+/// Interface to access internal graphics pipeline state
+pub trait Pipeline {
+    fn get_type(self: &Self) -> PipelineType;
+
+    // Returns the API specific handle
+    fn get(self : &Self) -> *const std::ffi::c_void;
+}
+
 #[derive(Default)]
 pub struct GraphicsPipeline {
     // Open GL program ID
     id: GLuint,
 }
 
-impl Drop for GraphicsPipeline {
-    fn drop(&mut self) {
-        unsafe {
-            gl::DeleteProgram(self.id);
-        }
+// Implement the generic interface for pipelines 
+impl Pipeline for GraphicsPipeline 
+{
+    fn get_type(self: &Self) -> PipelineType { PipelineType::Graphics }
+
+    fn get(self: &Self) -> *const std::ffi::c_void
+    {
+        self.id as *const _
     }
 }
 
-impl GraphicsPipeline {
-    pub fn get_id(&self) -> GLuint {
-        return self.id;
-    }
 
+impl GraphicsPipeline {
     fn new() -> GraphicsPipeline {
         unsafe {
             GraphicsPipeline {
@@ -52,9 +68,16 @@ impl GraphicsPipeline {
             }
         }
     }
-    pub fn bind_storage_buffer(&self, buffer: GLuint, binding: GLuint){
+
+    pub fn bind_buffer(&self, buffer: &impl buffers::BufferResource, slot : u32){
         unsafe{
-            gl::BindBufferBase(gl::SHADER_STORAGE_BUFFER,binding, buffer);
+            gl::BindBufferBase(gl::SHADER_STORAGE_BUFFER, slot, buffer.get_resource() as GLuint);
+        }
+    }
+
+    pub fn bind_texture(&mut self, rt: &RenderTarget) {
+        unsafe{
+            gl::BindImageTexture(0, rt.get_texture(), 0, false as u8, 0, gl::WRITE_ONLY, gl::RGBA8);
         }
     }
 
@@ -116,15 +139,17 @@ impl PipelineBuilder {
     {
         let mut result = GraphicsPipeline::new();
 
+        assert!(self.cshader.is_some() || ( (self.fshader.is_some() || self.vshader.is_some()) && self.cshader.is_none() ), "Can not have a compute shader bound to a program that has a vertex shader or a fragment shader!");
+
         if let Some(ref shader) = self.vshader {
             result.attach(&shader);
         }
 
-        if let Some(ref shader) = self.cshader {
+        if let Some(ref shader) = self.fshader {
             result.attach(&shader);
         }
 
-        if let Some(ref shader) = self.fshader {
+        if let Some(ref shader) = self.cshader {
             result.attach(&shader);
         }
         
@@ -134,4 +159,12 @@ impl PipelineBuilder {
         result
     }
 
+}
+
+impl Drop for GraphicsPipeline {
+    fn drop(&mut self) {
+        unsafe {
+            gl::DeleteProgram(self.id);
+        }
+    }
 }
