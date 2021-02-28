@@ -34,64 +34,22 @@ impl GLContext{
     }
 
     /// Enables the OpenGL debug callbacks. This is only available in debug configurations
-    pub fn set_debug(&mut self) -> &Self {
+    pub fn set_debug(&mut self) {
         unsafe{
             gl::Enable(gl::DEBUG_OUTPUT);
             gl::DebugMessageCallback(GLContext::gl_debug_message,std::ptr::null());
         }
-
-        self
     }
 
-    /// Set's the current active viewport
-    pub fn set_viewport(&mut self, x: i32, y: i32, width: i32, height: i32) -> &Self{
-        unsafe{
-            gl::Viewport(x,y,width,height);
-        }
-
-        self
+    pub fn create_command_list(&self) -> impl program::CommandList {
+        program::GraphicsCommandList::default()
     }
 
-    /// Clears the current bound render target
-    pub fn clear(&mut self, color : Option<Color>) -> &Self {
-        unsafe {
-            match color {
-                Some(c) => gl::ClearColor(c.r as f32 / 255.0,c.g as f32 / 255.0,c.b as f32 / 255.0, c.a as f32 / 255.0),
-                None => {}
-            }
-
-            gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
-        }
-
-        self
+    pub fn execute_command_list(&self, _ : &impl program::CommandList ) 
+    {
+        // Do nothing in opengl
     }
-
-    /// Binds a pipeline to the context.
-    pub fn bind_pipeline(&mut self, pipeline: &impl program::Pipeline){
-        assert!(pipeline.get_type() == program::PipelineType::Graphics);
-        unsafe{
-            gl::UseProgram(pipeline.get() as GLuint);
-        }
-    }
-
-    /// Binds a render target for drawing
-    pub fn bind_rt(&mut self, rt: &RenderTarget){
-       unsafe{
-           gl::BindFramebuffer(gl::FRAMEBUFFER, rt.get_fb());
-       }
-    }
-
-    pub fn dispatch(&mut self, groups_x : u32, groups_y : u32, groups_z : u32){
-        unsafe{
-            gl::DispatchCompute(groups_x as GLuint, groups_y as GLuint, groups_z as GLuint);
-        }
-    }
-
-    pub fn memory_barrier(&mut self, barrier : MemoryBarrier){
-        unsafe{
-            gl::MemoryBarrier(barrier.get())
-        }
-    }
+  
 }
 
 pub enum MemoryBarrier {
